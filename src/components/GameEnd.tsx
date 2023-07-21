@@ -1,6 +1,15 @@
 import { forwardRef } from 'react';
 
-export const GameEnd = forwardRef(function GameEnd({ result, score, startNewGame }, modalRef) {
+interface GameEndProps {
+    result: string;
+    score: number;
+    startNewGame: () => void;
+}
+
+export const GameEnd = forwardRef<HTMLDialogElement, GameEndProps>(function GameEnd(
+    { result, score, startNewGame },
+    modalRef
+) {
     return (
         <dialog className="w-1/5 rounded-3xl" ref={modalRef}>
             <h1 className="my-4">You {result}!</h1>

@@ -1,4 +1,11 @@
-export function Card({ fileName, scoreClick }) {
+import { MouseEvent } from 'react';
+
+interface CardProps {
+    fileName: string;
+    scoreClick: (e: MouseEvent) => void;
+}
+
+export function Card({ fileName, scoreClick }: CardProps) {
     const image = new URL(`../assets/${fileName}.png`, import.meta.url).href;
 
     return (

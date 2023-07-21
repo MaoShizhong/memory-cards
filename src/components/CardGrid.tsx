@@ -1,10 +1,20 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, MouseEvent } from 'react';
 import { v4 as uuidV4 } from 'uuid';
 import { Card } from './Card';
 import { Scores } from './Scores';
 import { GameEnd } from './GameEnd';
 
-const ALL_CARDS = [
+interface CardDetails {
+    fileName: string;
+    id: string;
+}
+
+interface GameState {
+    cardComponents: CardDetails[];
+    cardsClicked: string[];
+}
+
+const ALL_CARDS: CardDetails[] = [
     { fileName: 'cutoff_heart', id: uuidV4() },
     { fileName: 'green_pink_nose', id: uuidV4() },
     { fileName: 'LRL_chevrons_crooked_in', id: uuidV4() },
@@ -24,7 +34,7 @@ const ALL_CARDS = [
     { fileName: 'small_hept_big_oct', id: uuidV4() },
     { fileName: 'small_oct_big_hept', id: uuidV4() },
 ];
-const NEW_GAME_STATE = {
+const NEW_GAME_STATE: GameState = {
     cardComponents: getShuffledCards(ALL_CARDS),
     cardsClicked: [],
 };
@@ -34,17 +44,17 @@ export function CardGrid() {
     const [cards, setCards] = useState(NEW_GAME_STATE);
     const [bestScore, setBestScore] = useState(0);
 
-    const modalRef = useRef(null);
+    const modalRef = useRef<HTMLDialogElement>(null);
 
-    useEffect(() => {
+    useEffect((): void => {
         if (cards.cardsClicked.length === cards.cardComponents.length) {
             setPlayState('win');
         }
     }, [cards]);
 
-    useEffect(() => {
+    useEffect((): void => {
         if (playState !== 'play') {
-            modalRef.current.showModal();
+            modalRef.current?.showModal();
         }
     }, [playState]);
 
@@ -67,19 +77,21 @@ export function CardGrid() {
         </div>
     );
 
-    function scoreClick(e) {
-        if (cards.cardsClicked.includes(e.currentTarget.value)) {
+    function scoreClick(e: MouseEvent): void {
+        const cardBtn = e.currentTarget as HTMLButtonElement;
+
+        if (cards.cardsClicked.includes(cardBtn.value)) {
             setPlayState('lose');
         } else {
             setCards({
                 cardComponents: getShuffledCards([...cards.cardComponents]),
-                cardsClicked: [...cards.cardsClicked, e.currentTarget.value],
+                cardsClicked: [...cards.cardsClicked, cardBtn.value],
             });
         }
     }
 
-    function startNewGame() {
-        modalRef.current.close();
+    function startNewGame(): void {
+        modalRef.current?.close();
         setPlayState('play');
         setBestScore(Math.max(bestScore, cards.cardsClicked.length));
         setCards(NEW_GAME_STATE);
@@ -89,9 +101,9 @@ export function CardGrid() {
 /* 
     Fisher-Yates shuffle - less permutation bias than other shuffle algos
 */
-function getShuffledCards(arr) {
+function getShuffledCards(arr: CardDetails[]): CardDetails[] {
     for (let i = arr.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1));
+        const j = ~~(Math.random() * (i + 1));
         [arr[i], arr[j]] = [arr[j], arr[i]];
     }
     return arr;
