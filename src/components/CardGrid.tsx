@@ -14,6 +14,8 @@ interface GameState {
     cardsClicked: string[];
 }
 
+type PlayState = 'play' | 'win' | 'lose';
+
 const ALL_CARDS: CardDetails[] = [
     { fileName: 'cutoff_heart', id: uuidV4() },
     { fileName: 'green_pink_nose', id: uuidV4() },
@@ -34,13 +36,14 @@ const ALL_CARDS: CardDetails[] = [
     { fileName: 'small_hept_big_oct', id: uuidV4() },
     { fileName: 'small_oct_big_hept', id: uuidV4() },
 ];
+
 const NEW_GAME_STATE: GameState = {
     cardComponents: getShuffledCards(ALL_CARDS),
     cardsClicked: [],
 };
 
 export function CardGrid() {
-    const [playState, setPlayState] = useState('play');
+    const [playState, setPlayState] = useState<PlayState>('play');
     const [cards, setCards] = useState(NEW_GAME_STATE);
     const [bestScore, setBestScore] = useState(0);
 
